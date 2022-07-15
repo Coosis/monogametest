@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\11597\\Documents\\monogametest\\monogametest.csproj": {}
+    "C:\\Users\\11597\\Documents\\monogametest\\monogametest.csproj": {}
   },
   "projects": {
-    "c:\\Users\\11597\\Documents\\monogametest\\monogametest.csproj": {
+    "C:\\Users\\11597\\Documents\\monogametest\\monogametest.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\11597\\Documents\\monogametest\\monogametest.csproj",
+        "projectUniqueName": "C:\\Users\\11597\\Documents\\monogametest\\monogametest.csproj",
         "projectName": "monogametest",
-        "projectPath": "c:\\Users\\11597\\Documents\\monogametest\\monogametest.csproj",
+        "projectPath": "C:\\Users\\11597\\Documents\\monogametest\\monogametest.csproj",
         "packagesPath": "C:\\Users\\11597\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\11597\\Documents\\monogametest\\obj\\",
+        "outputPath": "C:\\Users\\11597\\Documents\\monogametest\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
