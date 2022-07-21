@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -7,10 +8,17 @@ namespace monogametest
 {
     public class Game1 : Game
     {
+        //[warning: DO NOT TOUCH.] Monogame core code
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        //self-declared core variables
+        
+
+        //testing
         private Texture2D ui_image;
+        private UI myUI, sonUI;
+        private float f1;
 
         public Game1()
         {
@@ -21,9 +29,9 @@ namespace monogametest
 
         protected override void Initialize()
         {
-            //UI ui = new UI(_spriteBatch, ui_image, new Vector2(35, 56), new Vector2(200, 45), new Vector2(10, 10));
-
             base.Initialize();
+            myUI = new UI(null, ui_image, new Vector2(20, 20), new Vector2(200, 200), new Vector2(10, 10));
+            sonUI = new UI(null, ui_image, new Vector2(f1, 0), new Vector2(65, 65), new Vector2(10, 10));
         }
 
         protected override void LoadContent()
@@ -31,8 +39,6 @@ namespace monogametest
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             ui_image = Content.Load<Texture2D>("ui/ui_image");
-
-            // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
@@ -42,6 +48,7 @@ namespace monogametest
                 //Exit();
 
             Window.Title = "MONOGAMEFUN";
+            f1 += 5;
 
             base.Update(gameTime);
         }
@@ -50,6 +57,9 @@ namespace monogametest
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            myUI.Draw(_spriteBatch);
+            myUI.AddChild(sonUI);
+            sonUI.Draw(_spriteBatch);
 
             base.Draw(gameTime);
         }
@@ -60,7 +70,7 @@ namespace monogametest
     /// </summary>
     public class UI{
         private SpriteBatch _spritebatch;
-
+        //ui basic properties
         /// <summary>
         /// The default texture.
         /// </summary>
@@ -85,7 +95,26 @@ namespace monogametest
         /// The position of the ui(in pixels), relative to upper left corner.
         /// </summary>
         /// <returns></returns>
-        public Vector2 position = new Vector2(0, 0);
+        public Vector2 position{
+            get{ 
+                if(parent == null){
+                    return _position;
+                }
+                else {
+                    return _position - parent.position;
+                }
+            }
+
+            set{
+                if(parent == null){
+                    _position = value;
+                }
+                else{
+                    _position = parent.position + value;
+                }
+            }
+        }
+        public Vector2 _position = new Vector2(0, 0);
         /// <summary>
         /// The angle of the ui.
         /// </summary>
@@ -105,7 +134,7 @@ namespace monogametest
         /// <returns></returns>
         public Color color = new Color(255, 255, 255, 255);
         /// <summary>
-        /// The filp of ui.
+        /// The filp of ui(Does not work with 9-patch).
         /// </summary>
         public SpriteEffects flip = SpriteEffects.None;
         /// <summary>
@@ -119,6 +148,16 @@ namespace monogametest
         public bool ninePatches = true;
     
         /// <summary>
+        /// The parent of this ui.
+        /// </summary>
+        public UI parent = null;
+        /// <summary>
+        /// The children of this ui.
+        /// </summary>
+        public List<UI> children = new List<UI>();
+
+        //ui functions
+        /// <summary>
         /// The draw process of the ui.
         /// </summary>
         /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
@@ -131,37 +170,64 @@ namespace monogametest
             if(ninePatches){
                 spriteBatch.Begin();
                 //4 corners
-                spriteBatch.Draw(texture, new Rectangle((int)(position.X - center.X), (int)(position.Y - center.Y), (int)side.X, (int)side.Y), new Rectangle(0, 0, (int)side.X, (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
-                spriteBatch.Draw(texture, new Rectangle((int)(position.X - center.X - side.X + width), (int)(position.Y - center.Y), (int)side.X, (int)side.Y), new Rectangle(texture.Width - (int)side.X, 0, (int)side.X, (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
-                spriteBatch.Draw(texture, new Rectangle((int)(position.X - center.X), (int)(position.Y - center.Y - side.Y + height), (int)side.X, (int)side.Y), new Rectangle(0, texture.Height - (int)side.Y, (int)side.X, (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
-                spriteBatch.Draw(texture, new Rectangle((int)(position.X - center.X - side.X + width), (int)(position.Y - center.Y - side.Y + height), (int)side.X, (int)side.Y), new Rectangle(texture.Width - (int)side.X, texture.Height - (int)side.Y, (int)side.X, (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X), (int)(_position.Y - center.Y), (int)side.X, (int)side.Y), new Rectangle(0, 0, (int)side.X, (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X - side.X + width), (int)(_position.Y - center.Y), (int)side.X, (int)side.Y), new Rectangle(texture.Width - (int)side.X, 0, (int)side.X, (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X), (int)(_position.Y - center.Y - side.Y + height), (int)side.X, (int)side.Y), new Rectangle(0, texture.Height - (int)side.Y, (int)side.X, (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X - side.X + width), (int)(_position.Y - center.Y - side.Y + height), (int)side.X, (int)side.Y), new Rectangle(texture.Width - (int)side.X, texture.Height - (int)side.Y, (int)side.X, (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
                 spriteBatch.End();
                 spriteBatch.Begin();
                 
                 //4 sides
-                spriteBatch.Draw(texture, new Rectangle((int)(position.X - center.X + side.X), (int)(position.Y - center.Y), (int)(width - 2*side.X), (int)side.Y), new Rectangle((int)side.X, 0, (int)(texture.Width - 2*side.X), (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
-                spriteBatch.Draw(texture, new Rectangle((int)(position.X - center.X), (int)(position.Y - center.Y + side.Y), (int)side.X, (int)(height - 2*side.Y)), new Rectangle(0, (int)side.Y, (int)side.X, (int)(texture.Height - 2*side.Y)), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
-                spriteBatch.Draw(texture, new Rectangle((int)(position.X - center.X - side.X + width), (int)(position.Y - center.Y + side.Y), (int)side.X, (int)(height - 2*side.Y)), new Rectangle((int)(texture.Width - side.X), (int)side.Y, (int)side.X, (int)(texture.Height - 2*side.Y)), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
-                spriteBatch.Draw(texture, new Rectangle((int)(position.X - center.X + side.X), (int)(position.Y - center.Y - side.Y + height), (int)(width - 2*side.X), (int)side.Y), new Rectangle((int)side.X, (int)(texture.Height - side.Y), (int)(texture.Width - 2*side.X), (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X + side.X), (int)(_position.Y - center.Y), (int)(width - 2*side.X), (int)side.Y), new Rectangle((int)side.X, 0, (int)(texture.Width - 2*side.X), (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X), (int)(_position.Y - center.Y + side.Y), (int)side.X, (int)(height - 2*side.Y)), new Rectangle(0, (int)side.Y, (int)side.X, (int)(texture.Height - 2*side.Y)), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X - side.X + width), (int)(_position.Y - center.Y + side.Y), (int)side.X, (int)(height - 2*side.Y)), new Rectangle((int)(texture.Width - side.X), (int)side.Y, (int)side.X, (int)(texture.Height - 2*side.Y)), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X + side.X), (int)(_position.Y - center.Y - side.Y + height), (int)(width - 2*side.X), (int)side.Y), new Rectangle((int)side.X, (int)(texture.Height - side.Y), (int)(texture.Width - 2*side.X), (int)side.Y), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
                 //center
-                spriteBatch.Draw(texture, new Rectangle((int)(position.X - center.X + side.X), (int)(position.Y - center.Y + side.Y), (int)(width - 2*side.X), (int)(height - 2*side.Y)), new Rectangle((int)side.X, (int)side.Y, (int)(texture.Width - 2*side.X), (int)(texture.Height - 2*side.Y)), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X + side.X), (int)(_position.Y - center.Y + side.Y), (int)(width - 2*side.X), (int)(height - 2*side.Y)), new Rectangle((int)side.X, (int)side.Y, (int)(texture.Width - 2*side.X), (int)(texture.Height - 2*side.Y)), color, angle, new Vector2(0, 0), SpriteEffects.None, layer);
 
                 spriteBatch.End();
             }
             else{
                 spriteBatch.Begin();
-                spriteBatch.Draw(texture, new Rectangle((int)position.X, (int)position.Y, width, height), new Rectangle(0, 0, texture.Width, texture.Height), color, angle, center, flip, layer);
+                spriteBatch.Draw(texture, new Rectangle((int)_position.X, (int)_position.Y, width, height), new Rectangle(0, 0, texture.Width, texture.Height), color, angle, center, flip, layer);
                 spriteBatch.End();
             }
 
             return true;
         }
+        public void AddParent(UI parent){
+            if(parent != null){
+                Vector2 pos = position;
+                if(this.parent != null)
+                    this.parent.children.Remove(this);
+                this.parent = parent;
+                if(!parent.children.Contains(this))
+                    parent.children.Add(this);
+                this.position = pos;
+            }
+        }
+        public void AddChild(UI Child){
+            if(!children.Contains(Child)){
+                Vector2 pos = Child.position;
+                children.Add(Child);
+                if(Child.parent != null)
+                    Child.parent.children.Remove(Child);
+                Child.parent = this;
+                Child.position = pos;
+            }
+        }
 
-        
+        //constructors
         /// <summary>
         /// Empty ui constructor.
         /// </summary>
         public UI(){}
+        /// <summary>
+        /// Basic texture drawing(ninePatch on).
+        /// </summary>
+        /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
+        /// <param name="texture">The texture to be drawn.</param>
+        /// <param name="pos">The position of the ui.</param>
         public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos){
             this._spritebatch = spriteBatch;
 
