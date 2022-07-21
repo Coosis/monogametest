@@ -13,7 +13,7 @@ namespace monogametest
         private SpriteBatch _spriteBatch;
 
         //self-declared core variables
-        
+        private List<Canvas> canvas = new List<Canvas>();
 
         //testing
         private Texture2D ui_image;
@@ -30,8 +30,6 @@ namespace monogametest
         protected override void Initialize()
         {
             base.Initialize();
-            myUI = new UI(null, ui_image, new Vector2(20, 20), new Vector2(200, 200), new Vector2(10, 10));
-            sonUI = new UI(null, ui_image, new Vector2(f1, 0), new Vector2(65, 65), new Vector2(10, 10));
         }
 
         protected override void LoadContent()
@@ -39,6 +37,15 @@ namespace monogametest
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             ui_image = Content.Load<Texture2D>("ui/ui_image");
+
+            Canvas ohboy = new Canvas();
+
+            myUI = new UI(null, ui_image, new Vector2(20, 20), new Vector2(200, 200), new Vector2(10, 10));
+            sonUI = new UI(null, ui_image, new Vector2(f1, 0), new Vector2(65, 65), new Vector2(10, 10));
+            myUI.AddChild(sonUI);
+            ohboy.AddUI(myUI);
+
+            canvas.Add(ohboy);
         }
 
         protected override void Update(GameTime gameTime)
@@ -57,9 +64,11 @@ namespace monogametest
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            myUI.Draw(_spriteBatch);
-            myUI.AddChild(sonUI);
-            sonUI.Draw(_spriteBatch);
+            if(canvas != null){
+                foreach(Canvas c in canvas){
+                    c.Draw(_spriteBatch);
+                }
+            }
 
             base.Draw(gameTime);
         }
@@ -191,6 +200,10 @@ namespace monogametest
                 spriteBatch.Begin();
                 spriteBatch.Draw(texture, new Rectangle((int)_position.X, (int)_position.Y, width, height), new Rectangle(0, 0, texture.Width, texture.Height), color, angle, center, flip, layer);
                 spriteBatch.End();
+            }
+
+            foreach(UI i in children){
+                i.Draw(spriteBatch);
             }
 
             return true;
@@ -390,6 +403,34 @@ namespace monogametest
             this.angle = angle;
 
             Draw(_spritebatch);
+        }
+    }
+
+    /// <summary>
+    /// A class needed for ui drawing.
+    /// </summary>
+    public class Canvas{
+        public List<UI> ui = new List<UI>();
+        public void AddUI(UI _ui){
+            if(!ui.Contains(_ui)){
+                ui.Add(_ui);
+            }
+        }
+        public void RemoveUI(UI _ui){
+            if(ui.Contains(_ui)){
+                ui.Remove(_ui);
+            }
+        }
+
+        public void Draw(SpriteBatch _spriteBatch){
+            foreach(UI i in ui){
+                i.Draw(_spriteBatch);
+            }
+        }
+
+        //Constructor
+        public Canvas(){
+            ui = new List<UI>();
         }
     }
 }

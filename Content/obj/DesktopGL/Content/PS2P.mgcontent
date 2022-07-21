@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/11597/Documents/monogametest/Content/PS2P.spritefont</SourceFile>
+  <SourceFile>C:/Users/11597/Documents/monogametest/Content/PS2P.spritefont</SourceFile>
   <SourceTime>2022-07-17T11:22:02.7318915+08:00</SourceTime>
-  <DestFile>c:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/PS2P.xnb</DestFile>
-  <DestTime>2022-07-21T22:33:10.6468217+08:00</DestTime>
+  <DestFile>C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/PS2P.xnb</DestFile>
+  <DestTime>2022-07-21T22:45:56.7108814+08:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2020-08-11T00:17:54+08:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>
