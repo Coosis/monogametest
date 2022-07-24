@@ -24,3 +24,5 @@ C:\Users\11597\Documents\monogametest\obj\Debug\netcoreapp3.1\monogametest.pdb
 C:\Users\11597\Documents\monogametest\obj\Debug\netcoreapp3.1\monogametest.genruntimeconfig.cache
 C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\ui\ui_image.xnb
 C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\PS2P.xnb
+C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\MonoGame.Extended.dll
+C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
