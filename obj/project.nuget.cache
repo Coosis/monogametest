@@ -1,11 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "07MKYMOIlAgRq6miloxyFWnMCvbjnejxsqwNV7lf0oMzWjJ6UuOG0binPIZhPRncMszrCNbvLHdE+UC4bsg4Ow==",
+  "dgSpecHash": "6b8fsxDjdU9naVHphsJui0MnquAm+xEvzJr0JRsN1F/fDEVpvpoKhoRwpa3PT4hlMIE66BvAjlhA+5+zI2vOHA==",
   "success": true,
   "projectFilePath": "C:\\Users\\11597\\Documents\\monogametest\\monogametest.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\11597\\.nuget\\packages\\autofac\\5.2.0\\autofac.5.2.0.nupkg.sha512",
     "C:\\Users\\11597\\.nuget\\packages\\monogame.content.builder.task\\3.8.0.1641\\monogame.content.builder.task.3.8.0.1641.nupkg.sha512",
     "C:\\Users\\11597\\.nuget\\packages\\monogame.extended\\3.8.0\\monogame.extended.3.8.0.nupkg.sha512",
+    "C:\\Users\\11597\\.nuget\\packages\\monogame.extended.content.pipeline\\3.8.0\\monogame.extended.content.pipeline.3.8.0.nupkg.sha512",
+    "C:\\Users\\11597\\.nuget\\packages\\monogame.extended.graphics\\3.8.0\\monogame.extended.graphics.3.8.0.nupkg.sha512",
+    "C:\\Users\\11597\\.nuget\\packages\\monogame.extended.tiled\\3.8.0\\monogame.extended.tiled.3.8.0.nupkg.sha512",
     "C:\\Users\\11597\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.0.1641\\monogame.framework.desktopgl.3.8.0.1641.nupkg.sha512",
     "C:\\Users\\11597\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
     "C:\\Users\\11597\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.10\\microsoft.aspnetcore.app.ref.3.1.10.nupkg.sha512",

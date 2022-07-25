@@ -9,7 +9,7 @@
 /compress:False
 
 #-------------------------------- References --------------------------------#
-
+/reference:C:\Users\11597\.nuget\packages\monogame.extended.content.pipeline\3.8.0\tools\MonoGame.Extended.Content.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -19,6 +19,11 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:PS2P.spritefont
+
+#begin tiled/samplemap.tmx
+/importer:
+/processor:
+/build:tiled/samplemap.tmx
 
 #begin ui/ui_circle.png
 /importer:TextureImporter

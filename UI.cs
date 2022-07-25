@@ -122,8 +122,11 @@ namespace monogametest{
         /// </summary>
         protected Color[] color_data;
         protected bool MouseOver = false;
+        protected bool previous_MouseOver = false;
         protected bool NonAlphaMouseOver = false;
+        protected bool previous_NonAlphaMouseOver = false;
         protected bool _ninePatches = true;
+        protected MouseState mouseState, previous_mouseState;
         protected Vector2 _position = new Vector2(0, 0);
 
         //ui functions
@@ -168,7 +171,7 @@ namespace monogametest{
             return true;
         }
         public void Update(){
-            MouseState mouseState = Mouse.GetState();
+            mouseState = Mouse.GetState();
             Vector2 mouse_pos = new Vector2(mouseState.X, mouseState.Y) - _position + center;
 
             NonAlphaMouseOver = (mouse_pos.X >= 0) && (mouse_pos.X <= width) && (mouse_pos.Y >= 0) && (mouse_pos.Y <= height); 
@@ -176,6 +179,10 @@ namespace monogametest{
             index = MathHelper.Clamp(index, 0, color_data.Length - 1);
             MouseOver = (!(color_data[index].A == 0) && NonAlphaMouseOver);
 
+            foreach(UI child in children){
+                child.Update();
+            }
+            
             if(children.Count == 0 && NonAlphaMouseOver){
                 List<UI> tree = new List<UI>();
                 UI container = this;
@@ -202,9 +209,57 @@ namespace monogametest{
                 }
             }
             
-            foreach(UI child in children){
-                child.Update();
+            //Mouse event handling
+            if(ninePatches){
+                if(!previous_NonAlphaMouseOver && NonAlphaMouseOver)
+                    if(OnMouseEnter != null)
+                        OnMouseEnter();
+                else if(previous_NonAlphaMouseOver && !NonAlphaMouseOver)
+                    if(OnMouseExit != null)
+                        OnMouseExit();
+
+                if(NonAlphaMouseOver){
+                    if(mouseState.LeftButton == ButtonState.Pressed && previous_mouseState.LeftButton != ButtonState.Pressed){
+                        if(OnMouseClick != null)
+                            OnMouseClick(MouseClickMode.Left);
+                    }
+                    else if(mouseState.RightButton == ButtonState.Pressed && previous_mouseState.RightButton != ButtonState.Pressed){
+                        if(OnMouseClick != null)
+                            OnMouseClick(MouseClickMode.Right);
+                    }
+                    else if(mouseState.MiddleButton == ButtonState.Pressed && previous_mouseState.MiddleButton != ButtonState.Pressed){
+                        if(OnMouseClick != null)
+                            OnMouseClick(MouseClickMode.Middle);
+                    }
+                }
             }
+            else{
+                if(!previous_MouseOver && MouseOver)
+                    if(OnMouseEnter != null)
+                        OnMouseEnter();
+                else if(previous_MouseOver && !MouseOver)
+                    if(OnMouseExit != null)
+                        OnMouseExit();
+
+                if(MouseOver){
+                    if(mouseState.LeftButton == ButtonState.Pressed && previous_mouseState.LeftButton != ButtonState.Pressed){
+                        if(OnMouseClick != null)
+                            OnMouseClick(MouseClickMode.Left);
+                    }
+                    else if(mouseState.RightButton == ButtonState.Pressed && previous_mouseState.RightButton != ButtonState.Pressed){
+                        if(OnMouseClick != null)
+                            OnMouseClick(MouseClickMode.Right);
+                    }
+                    else if(mouseState.MiddleButton == ButtonState.Pressed && previous_mouseState.MiddleButton != ButtonState.Pressed){
+                        if(OnMouseClick != null)
+                            OnMouseClick(MouseClickMode.Middle);
+                    }
+                }
+            }
+            
+            previous_MouseOver = MouseOver;
+            previous_NonAlphaMouseOver = NonAlphaMouseOver;
+            previous_mouseState = mouseState;
         }
         /// <summary>
         /// Returns whether mouse is over the texture(alpha channel included, DOES NOT WORK WELL WITH 9-PATCH).
@@ -255,6 +310,29 @@ namespace monogametest{
             }
             return target;
         }
+        /// <summary>
+        /// Get the parent's bounds.
+        /// </summary>
+        /// <param name="_graphics">The GraphicsDeviceManager used.</param>
+        /// <returns></returns>
+        public Vector2 GetParentBounds(GraphicsDeviceManager _graphics){
+            Vector2 target = new Vector2(0, 0);
+            if(parent == null){
+                target.X = _graphics.PreferredBackBufferWidth;
+                target.Y = _graphics.PreferredBackBufferHeight;
+            }
+            else {
+                target.X = parent.width;
+                target.Y = parent.height;
+            }
+            return target;
+        }
+        
+        //Events
+        public delegate void MouseHoverHandler();
+        public event MouseHoverHandler OnMouseEnter, OnMouseExit;
+        public delegate void MouseClickHandler(MouseClickMode mcm);
+        public event MouseClickHandler OnMouseClick;
         
         //constructors
         /// <summary>

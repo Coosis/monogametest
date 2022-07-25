@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame;
 using MonoGame.Extended;
+using MonoGame.Extended.Tiled;
+using MonoGame.Extended.Tiled.Renderers;
 using MonoGame.Extended.ViewportAdapters;
 
 namespace monogametest
@@ -29,6 +31,7 @@ namespace monogametest
         private Texture2D ui_image, ui_circle;
         private SpriteFont PS2P;
         private UI myUI, sonUI;
+        private int num1 = 0;
         private float x1 = 0, y1 = 0;
         private OrthographicCamera cam;
 
@@ -65,6 +68,12 @@ namespace monogametest
 
             myUI = new UI(null, ui_circle, new Vector2(20, 20), new Vector2(200, 200), new Vector2(10, 10), ninePatches: false);
             sonUI = new UI(null, ui_image, new Vector2(5, 0), new Vector2(65, 65), new Vector2(10, 10));
+            sonUI.OnMouseClick += (MouseClickMode mcm) =>{
+                num1 += 1;
+            };
+            myUI.OnMouseClick += (MouseClickMode mcm) =>{
+                num1 += 1;
+            };
             myUI.AddChild(sonUI);
             myUI.position = myUI.GetParentVertex(_graphics, new Vector2(0, 0));
             ohboy.AddUI(myUI);
@@ -119,6 +128,7 @@ namespace monogametest
             _spriteBatch.DrawString(PS2P, mousestate.Position.X + "/" + mousestate.Position.Y, new Vector2(0, 0), new Color(255, 266, 255, 0));
             _spriteBatch.DrawString(PS2P, myUI.GetMouseOver().ToString(), new Vector2(0, 15), new Color(255, 266, 255, 0));
             _spriteBatch.DrawString(PS2P, sonUI.GetMouseOver().ToString(), new Vector2(0, 30), new Color(255, 266, 255, 0));
+            _spriteBatch.DrawString(PS2P, num1.ToString(), new Vector2(0, 45), new Color(255, 266, 255, 0));
             _spriteBatch.End();
 
             //Draw all ui, under all canvases
