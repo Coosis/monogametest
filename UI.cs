@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,6 +17,8 @@ namespace monogametest{
             set{
                 if(value != null){
                     _texture = value; 
+                    color_data = new Color[value.Width * value.Height];
+                    value.GetData<Color>(color_data);
                 }
             }
         }
@@ -63,7 +66,6 @@ namespace monogametest{
             get{ return _position; }
             set{ _position = value; }
         }
-        public Vector2 _position = new Vector2(0, 0);
         /// <summary>
         /// The angle of the ui(does not work with 9-patch).
         /// </summary>
@@ -94,7 +96,16 @@ namespace monogametest{
         /// <summary>
         /// Have ui stretch-mode nine patch?
         /// </summary>
-        public bool ninePatches = true;
+        public bool ninePatches{
+            get { return _ninePatches; }
+            set {
+                _ninePatches = value;
+                if(value){
+                    angle = 0;
+                    flip = SpriteEffects.None;
+                }
+            }
+        }
         /// <summary>
         /// The parent of this ui.
         /// </summary>
@@ -103,7 +114,17 @@ namespace monogametest{
         /// The children of this ui.
         /// </summary>
         public List<UI> children = new List<UI>();
+        public MouseEventMode mouseEventMode = MouseEventMode.Stop;
 
+        //inner property fields
+        /// <summary>
+        /// The color of every pixel of the texture.
+        /// </summary>
+        protected Color[] color_data;
+        protected bool MouseOver = false;
+        protected bool NonAlphaMouseOver = false;
+        protected bool _ninePatches = true;
+        protected Vector2 _position = new Vector2(0, 0);
 
         //ui functions
         /// <summary>
@@ -117,14 +138,12 @@ namespace monogametest{
             }
 
             if(ninePatches){
-                spriteBatch.Begin();
+                spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                 //4 corners
                 spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X), (int)(_position.Y - center.Y), (int)side.X, (int)side.Y), new Rectangle(0, 0, (int)side.X, (int)side.Y), color, 0, new Vector2(0, 0), SpriteEffects.None, layer);
                 spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X - side.X + width), (int)(_position.Y - center.Y), (int)side.X, (int)side.Y), new Rectangle(texture.Width - (int)side.X, 0, (int)side.X, (int)side.Y), color, 0, new Vector2(0, 0), SpriteEffects.None, layer);
                 spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X), (int)(_position.Y - center.Y - side.Y + height), (int)side.X, (int)side.Y), new Rectangle(0, texture.Height - (int)side.Y, (int)side.X, (int)side.Y), color, 0, new Vector2(0, 0), SpriteEffects.None, layer);
                 spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X - side.X + width), (int)(_position.Y - center.Y - side.Y + height), (int)side.X, (int)side.Y), new Rectangle(texture.Width - (int)side.X, texture.Height - (int)side.Y, (int)side.X, (int)side.Y), color, 0, new Vector2(0, 0), SpriteEffects.None, layer);
-                spriteBatch.End();
-                spriteBatch.Begin();
                 
                 //4 sides
                 spriteBatch.Draw(texture, new Rectangle((int)(_position.X - center.X + side.X), (int)(_position.Y - center.Y), (int)(width - 2*side.X), (int)side.Y), new Rectangle((int)side.X, 0, (int)(texture.Width - 2*side.X), (int)side.Y), color, 0, new Vector2(0, 0), SpriteEffects.None, layer);
@@ -137,7 +156,7 @@ namespace monogametest{
                 spriteBatch.End();
             }
             else{
-                spriteBatch.Begin();
+                spriteBatch.Begin(samplerState: SamplerState.PointClamp);
                 spriteBatch.Draw(texture, new Rectangle((int)_position.X, (int)_position.Y, width, height), new Rectangle(0, 0, texture.Width, texture.Height), color, angle, center, flip, layer);
                 spriteBatch.End();
             }
@@ -149,7 +168,53 @@ namespace monogametest{
             return true;
         }
         public void Update(){
+            MouseState mouseState = Mouse.GetState();
+            Vector2 mouse_pos = new Vector2(mouseState.X, mouseState.Y) - _position + center;
+
+            NonAlphaMouseOver = (mouse_pos.X >= 0) && (mouse_pos.X <= width) && (mouse_pos.Y >= 0) && (mouse_pos.Y <= height); 
+            int index = ((int)(mouse_pos.Y/height*texture.Height) - 1)*texture.Width + ((int)(mouse_pos.X/width*texture.Width));
+            index = MathHelper.Clamp(index, 0, color_data.Length - 1);
+            MouseOver = (!(color_data[index].A == 0) && NonAlphaMouseOver);
+
+            if(children.Count == 0 && NonAlphaMouseOver){
+                List<UI> tree = new List<UI>();
+                UI container = this;
+                tree.Add(this);
+                while(container.parent != null){
+                    container = container.parent;
+                    tree.Add(container);
+                }
+                bool FirstStop = false;
+                foreach(UI ui in tree){
+                    if(FirstStop){
+                        ui.MouseOver = false;
+                        ui.NonAlphaMouseOver = false;
+                    }
+                    else{
+                        if(ui.mouseEventMode == MouseEventMode.Stop){
+                            FirstStop = true;
+                        }
+                        else if(ui.mouseEventMode == MouseEventMode.Ignore){
+                            ui.MouseOver = false;
+                            ui.NonAlphaMouseOver = false;
+                        }
+                    }
+                }
+            }
             
+            foreach(UI child in children){
+                child.Update();
+            }
+        }
+        /// <summary>
+        /// Returns whether mouse is over the texture(alpha channel included, DOES NOT WORK WELL WITH 9-PATCH).
+        /// </summary>
+        /// <returns></returns>
+        public bool GetMouseOver(){
+            return MouseOver;
+        }
+        public bool GetNonAlphaMouseOver(){
+            return NonAlphaMouseOver;
         }
         public void AddParent(UI parent){
             if(parent != null){
@@ -173,12 +238,12 @@ namespace monogametest{
             }
         }
         /// <summary>
-        /// Return the bounds special vertexes' positions(in pixels).
+        /// Return the parent's special vertexes' positions(in pixels).
         /// </summary>
         /// <param name="_graphics">The GraphicsDeviceManager used.</param>
         /// <param name="vector">The specified vertexes(0 is the center, 1 is the right edge).</param>
         /// <returns></returns>
-        public Vector2 GetParentBounds(GraphicsDeviceManager _graphics, Vector2 vector){
+        public Vector2 GetParentVertex(GraphicsDeviceManager _graphics, Vector2 vector){
             Vector2 target = new Vector2(0, 0);
             if(parent == null){
                 target.X = (_graphics.PreferredBackBufferWidth/2)*(1+vector.X);
@@ -197,7 +262,7 @@ namespace monogametest{
         /// </summary>
         public UI(){}
         /// <summary>
-        /// Basic texture drawing(ninePatch on).
+        /// Basic texture drawing.
         /// </summary>
         /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
         /// <param name="texture">The texture to be drawn.</param>
@@ -213,7 +278,7 @@ namespace monogametest{
             Draw(_spritebatch);
         }
         /// <summary>
-        /// Basic texture drawing(ninePatch on).
+        /// Basic texture drawing.
         /// </summary>
         /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
         /// <param name="texture">The texture to be drawn.</param>
@@ -230,80 +295,17 @@ namespace monogametest{
             Draw(_spritebatch);
         }
         /// <summary>
-        /// Texture drawing(ninePatch on).
+        /// Texture drawing.
         /// </summary>
         /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
         /// <param name="texture">The texture to be drawn.</param>
         /// <param name="pos">The position of the ui.</param>
         /// <param name="rect">The width and height of the ui.</param>
         /// <param name="side">The side's width and height of the nine-patched ui.</param>
-        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect, Vector2 side){
-            this._spritebatch = spriteBatch;
-
-            this.texture = texture;
-            this.position = pos;
-            this.width = (int)rect.X;
-            this.height = (int)rect.Y;
-            this.side = side;
-
-            Draw(_spritebatch);
-        }
-        /// <summary>
-        /// Texture drawing(ninePatch on).
-        /// </summary>
-        /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
-        /// <param name="texture">The texture to be drawn.</param>
-        /// <param name="pos">The position of the ui.</param>
-        /// <param name="rect">The width and height of the ui.</param>
-        /// <param name="side">The side's width and height of the nine-patched ui.</param>
-        /// <param name="center">The point used to calculate the position and such(in pixels).</param>
-        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect, Vector2 side, Vector2 center){
-            this._spritebatch = spriteBatch;
-
-            this.texture = texture;
-            this.position = pos;
-            this.width = (int)rect.X;
-            this.height = (int)rect.Y;
-            this.side = side;
-            this.center = center;
-
-            Draw(_spritebatch);
-        }
-        /// <summary>
-        /// Texture drawing(ninePatch on).
-        /// </summary>
-        /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
-        /// <param name="texture">The texture to be drawn.</param>
-        /// <param name="pos">The position of the ui.</param>
-        /// <param name="rect">The width and height of the ui.</param>
-        /// <param name="side">The side's width and height of the nine-patched ui.</param>
-        /// <param name="center">The point used to calculate the position and such(in pixels).</param>
-        /// <param name="layer">The layer/depth to draw on.</param>
-        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect, Vector2 side, Vector2 center, float layer){
-            this._spritebatch = spriteBatch;
-            
-            this.texture = texture;
-            this.position = pos;
-            this.width = (int)rect.X;
-            this.height = (int)rect.Y;
-            this.side = side;
-            this.center = center;
-            this.layer = layer;
-
-            Draw(_spritebatch);
-        }
-        /// <summary>
-        /// Texture drawing(ninePatch on).
-        /// </summary>
-        /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
-        /// <param name="texture">The texture to be drawn.</param>
-        /// <param name="pos">The position of the ui.</param>
-        /// <param name="rect">The width and height of the ui.</param>
-        /// <param name="side">The side's width and height of the nine-patched ui.</param>
-        /// <param name="center">The point used to calculate the position and such(in pixels).</param>
+        /// <param name="ninePatches">NinePatches is on by default. Only use this to turn it off.</param>
         /// <param name="layer">The layer/depth to draw on.</param>
         /// <param name="angle">The angle of the ui.</param>
-        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect, Vector2 side, Vector2 center, float layer, float angle){
+        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect, Vector2 side, bool ninePatches = true, float layer = 0, float angle = 0){
             this._spritebatch = spriteBatch;
             
             this.texture = texture;
@@ -311,55 +313,34 @@ namespace monogametest{
             this.width = (int)rect.X;
             this.height = (int)rect.Y;
             this.side = side;
-            this.center = center;
+            this.ninePatches = false;
             this.layer = layer;
             this.angle = angle;
 
             Draw(_spritebatch);
         }
         /// <summary>
-        /// Texture drawing(ninePatch on).
+        /// Texture drawing.
         /// </summary>
         /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
         /// <param name="texture">The texture to be drawn.</param>
         /// <param name="pos">The position of the ui.</param>
         /// <param name="rect">The width and height of the ui.</param>
+        /// <param name="side">The side's width and height of the nine-patched ui.</param>
         /// <param name="center">The point used to calculate the position and such(in pixels).</param>
-        /// <param name="ninePatches">NinePatches is on by default. Only use this to turn it off.</param>
-        /// <param name="layer">The layer/depth to draw on.</param>
-        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect, Vector2 center, bool ninePatches, float layer){
-            this._spritebatch = spriteBatch;
-            
-            this.texture = texture;
-            this.position = pos;
-            this.width = (int)rect.X;
-            this.height = (int)rect.Y;
-            this.center = center;
-            this.ninePatches = false;
-            this.layer = layer;
-
-            Draw(_spritebatch);
-        }
-        /// <summary>
-        /// Texture drawing(ninePatch on).
-        /// </summary>
-        /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
-        /// <param name="texture">The texture to be drawn.</param>
-        /// <param name="pos">The position of the ui.</param>
-        /// <param name="rect">The width and height of the ui.</param>
-        /// <param name="center">The point used to calculate the position and such(in pixels).</param>
-        /// <param name="ninePatches">NinePatches is on by default. Only use this to turn it off.</param>
+        /// <param name="ninePatches">Use 9-patch or not.</param>
         /// <param name="layer">The layer/depth to draw on.</param>
         /// <param name="angle">The angle of the ui.</param>
-        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect, Vector2 center, bool ninePatches, float layer, float angle){
+        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect, Vector2 side, Vector2 center, bool ninePatches = true, float layer = 0, float angle = 0){
             this._spritebatch = spriteBatch;
             
             this.texture = texture;
             this.position = pos;
             this.width = (int)rect.X;
             this.height = (int)rect.Y;
+            this.side = side;
             this.center = center;
-            this.ninePatches = false;
+            this.ninePatches = ninePatches;
             this.layer = layer;
             this.angle = angle;
 

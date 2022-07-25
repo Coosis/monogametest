@@ -1,3 +1,4 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"c:/Users/11597/Documents/monogametest/Content/PS2P.spritefont","c:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/PS2P.xnb","FontDescriptionProcessor","SpriteFontContent",2017,37922,0.5424572
-"c:/Users/11597/Documents/monogametest/Content/ui/ui_image.png","c:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/ui/ui_image.xnb","TextureProcessor","Texture2DContent",193,4181,0.013818
+"C:/Users/11597/Documents/monogametest/Content/PS2P.spritefont","C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/PS2P.xnb","FontDescriptionProcessor","SpriteFontContent",2017,37922,0.7987822
+"C:/Users/11597/Documents/monogametest/Content/ui/ui_circle.png","C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/ui/ui_circle.xnb","TextureProcessor","Texture2DContent",212,4181,0.0198097
+"C:/Users/11597/Documents/monogametest/Content/ui/ui_image.png","C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/ui/ui_image.xnb","TextureProcessor","Texture2DContent",193,4181,0.0030548

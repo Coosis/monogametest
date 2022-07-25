@@ -21,6 +21,11 @@ namespace monogametest{
             }
         }
 
+        public void Update(){
+            foreach(UI _ui in ui){
+                _ui.Update();
+            }
+        }
         public void Draw(SpriteBatch _spriteBatch){
             foreach(UI i in ui){
                 i.Draw(_spriteBatch);
