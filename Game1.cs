@@ -28,10 +28,11 @@ namespace monogametest
         private float previous_mousescroll;
 
         //testing
-        private Texture2D ui_image, ui_circle;
+        private Texture2D ui_image, ui_circle, matchman;
         private SpriteFont PS2P;
-        private UI myUI, sonUI;
-        private int num1 = 0;
+        private SpriteSheet ss;
+        private Animation Idle, Jump, Running;
+        private Node player;
         private float x1 = 0, y1 = 0;
         private OrthographicCamera cam;
 
@@ -50,9 +51,9 @@ namespace monogametest
             previous_mousescroll = previous_mousestate.ScrollWheelValue;
 
             //var Viewport = new DefaultViewportAdapter(GraphicsDevice);
-            var Viewport = new ScalingViewportAdapter(GraphicsDevice, 800, 480);
             //var Viewport = new WindowViewportAdapter(this.Window, GraphicsDevice);
             //var Viewport = new BoxingViewportAdapter(this.Window, GraphicsDevice);
+            var Viewport = new ScalingViewportAdapter(GraphicsDevice, 800, 480);
             cam = new OrthographicCamera(Viewport);
         }
 
@@ -63,22 +64,31 @@ namespace monogametest
             ui_image = Content.Load<Texture2D>("ui/ui_image");
             ui_circle = Content.Load<Texture2D>("ui/ui_circle");
             PS2P = Content.Load<SpriteFont>("PS2P");
+            
+            matchman = Content.Load<Texture2D>("matchman");
+            ss = new SpriteSheet(matchman);
+            ss.cut_bounds = new Vector2(32, 48);
+            ss.Cut(GraphicsDevice);
+            Texture2D[] output = ss.cut_texture.ToArray();
+            Texture2D[] idle_texture = new Texture2D[]{ output[0] };
+            Texture2D[] jump_texture = Animation.Trim(output, 0, 4);
+            Texture2D[] run_texture = Animation.Trim(output, 4, 6);
+            Idle = new Animation(idle_texture, 1000);
+            Jump = new Animation(jump_texture, 100);
+            Running = new Animation(run_texture, new float[]{100, 100, 150, 100, 100, 150});
 
             Canvas ohboy = new Canvas();
-
-            myUI = new UI(null, ui_circle, new Vector2(20, 20), new Vector2(200, 200), new Vector2(10, 10), ninePatches: false);
-            sonUI = new UI(null, ui_image, new Vector2(5, 0), new Vector2(65, 65), new Vector2(10, 10));
-            sonUI.OnMouseClick += (MouseClickMode mcm) =>{
-                num1 += 1;
-            };
-            myUI.OnMouseClick += (MouseClickMode mcm) =>{
-                num1 += 1;
-            };
-            myUI.AddChild(sonUI);
-            myUI.position = myUI.GetParentVertex(_graphics, new Vector2(0, 0));
-            ohboy.AddUI(myUI);
-
             canvas.Add(ohboy);
+
+            player = new Node();
+            player.position = new Vector2(120, 20);
+            player.animator = new Animator(player);
+            player.width = 32;
+            player.height = 48;
+            player.animator.AnimationSet.Add("Jump", Jump);
+            player.animator.AnimationSet.Add("Run", Running);
+            player.animator.AnimationSet.Add("Idle", Idle);
+            player.animator.SetAnimation("Idle");
         }
 
         protected override void Update(GameTime gameTime)
@@ -95,19 +105,35 @@ namespace monogametest
             //cam.Move(new Vector2((mousestate.ScrollWheelValue - previous_mousescroll)*0.1f, 0));
             if(keystate.IsKeyDown(Keys.A)){
                 x1 -= 3;
+                player.flip = SpriteEffects.FlipHorizontally;
+                if(!previous_keystate.IsKeyDown(Keys.A))
+                    player.animator.SetAnimation("Run");
             }
+            else if(previous_keystate.IsKeyDown(Keys.A))
+                player.animator.SetAnimation("Idle");
             if(keystate.IsKeyDown(Keys.D)){
                 x1 += 3;
+                player.flip = SpriteEffects.None;
+                if(!previous_keystate.IsKeyDown(Keys.D))
+                    player.animator.SetAnimation("Run");
             }
+            else if(previous_keystate.IsKeyDown(Keys.D))
+                player.animator.SetAnimation("Idle");
             if(keystate.IsKeyDown(Keys.W)){
                 y1 -= 3;
+                if(!previous_keystate.IsKeyDown(Keys.W))
+                    player.animator.SetAnimation("Jump");
             }
             if(keystate.IsKeyDown(Keys.S)){
                 y1 += 3;
+                if(!previous_keystate.IsKeyDown(Keys.S))
+                    player.animator.SetAnimation("Idle"); 
             }
 
             //Debug.WriteLine(cam.Zoom);
             //Debug.WriteLine(mousestate.ScrollWheelValue - previous_mousescroll);
+            player.position = new Vector2(x1, y1);
+            player.Update(gameTime);
 
             //Core expressions
             previous_keystate = keystate;
@@ -119,16 +145,11 @@ namespace monogametest
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            _spriteBatch.Begin(transformMatrix: cam.GetViewMatrix(), samplerState: SamplerState.PointWrap);
-            _spriteBatch.Draw(ui_image, new Vector2(x1, y1), new Rectangle(0, 0, ui_image.Width, ui_image.Height), new Color(255, 255, 255, 255));
-            _spriteBatch.End();
+            if(player.texture != null)
+                player.Draw(_spriteBatch);
 
             _spriteBatch.Begin();
             _spriteBatch.DrawString(PS2P, mousestate.Position.X + "/" + mousestate.Position.Y, new Vector2(0, 0), new Color(255, 266, 255, 0));
-            _spriteBatch.DrawString(PS2P, myUI.GetMouseOver().ToString(), new Vector2(0, 15), new Color(255, 266, 255, 0));
-            _spriteBatch.DrawString(PS2P, sonUI.GetMouseOver().ToString(), new Vector2(0, 30), new Color(255, 266, 255, 0));
-            _spriteBatch.DrawString(PS2P, num1.ToString(), new Vector2(0, 45), new Color(255, 266, 255, 0));
             _spriteBatch.End();
 
             //Draw all ui, under all canvases

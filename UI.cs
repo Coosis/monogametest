@@ -345,15 +345,19 @@ namespace monogametest{
         /// <param name="spriteBatch">The SpriteBatch used to draw the ui.</param>
         /// <param name="texture">The texture to be drawn.</param>
         /// <param name="pos">The position of the ui.</param>
-        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos){
+        /// <param name="ninePatches">NinePatches is on by default. Only use this to turn it off.</param>
+        /// <param name="layer">The layer/depth to draw on.</param>
+        /// <param name="angle">The angle of the ui.</param>
+        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, bool ninePatches = true, float layer = 0, float angle = 0){
             this._spritebatch = spriteBatch;
 
             this.texture = texture;
             this.position = pos;
             this.width = texture.Width;
             this.height = texture.Height;
-
-            Draw(_spritebatch);
+            this.ninePatches = ninePatches;
+            this.layer = layer;
+            this.angle = angle;
         }
         /// <summary>
         /// Basic texture drawing.
@@ -362,15 +366,19 @@ namespace monogametest{
         /// <param name="texture">The texture to be drawn.</param>
         /// <param name="pos">The position of the ui.</param>
         /// <param name="rect">The width and height of the ui.</param>
-        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect){
+        /// <param name="ninePatches">NinePatches is on by default. Only use this to turn it off.</param>
+        /// <param name="layer">The layer/depth to draw on.</param>
+        /// <param name="angle">The angle of the ui.</param>
+        public UI(SpriteBatch spriteBatch, Texture2D texture, Vector2 pos, Vector2 rect, bool ninePatches = true, float layer = 0, float angle = 0){
             this._spritebatch = spriteBatch;
 
             this.texture = texture;
             this.position = pos;
             this.width = (int)rect.X;
             this.height = (int)rect.Y;
-
-            Draw(_spritebatch);
+            this.ninePatches = ninePatches;
+            this.layer = layer;
+            this.angle = angle;
         }
         /// <summary>
         /// Texture drawing.
@@ -394,8 +402,6 @@ namespace monogametest{
             this.ninePatches = false;
             this.layer = layer;
             this.angle = angle;
-
-            Draw(_spritebatch);
         }
         /// <summary>
         /// Texture drawing.
@@ -421,8 +427,6 @@ namespace monogametest{
             this.ninePatches = ninePatches;
             this.layer = layer;
             this.angle = angle;
-
-            Draw(_spritebatch);
         }
     }
 }

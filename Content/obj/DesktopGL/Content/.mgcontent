@@ -4,12 +4,16 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>c:/Users/11597/Documents/monogametest/Content/PS2P.spritefont</File>
-    <File>c:/Users/11597/Documents/monogametest/Content/tiled/samplemap.tmx</File>
-    <File>c:/Users/11597/Documents/monogametest/Content/ui/ui_circle.png</File>
-    <File>c:/Users/11597/Documents/monogametest/Content/ui/ui_image.png</File>
+    <File>C:/Users/11597/Documents/monogametest/Content/matchman.png</File>
+    <File>C:/Users/11597/Documents/monogametest/Content/PS2P.spritefont</File>
+    <File>C:/Users/11597/Documents/monogametest/Content/tiled/samplemap.tmx</File>
+    <File>C:/Users/11597/Documents/monogametest/Content/ui/32map.png</File>
+    <File>C:/Users/11597/Documents/monogametest/Content/ui/ui_circle.png</File>
+    <File>C:/Users/11597/Documents/monogametest/Content/ui/ui_image.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
