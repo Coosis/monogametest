@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/11597/Documents/monogametest/Content/tiled/samplemap.tmx</SourceFile>
+  <SourceFile>c:/Users/11597/Documents/monogametest/Content/tiled/samplemap.tmx</SourceFile>
   <SourceTime>2019-08-01T09:13:47.4235057+08:00</SourceTime>
-  <DestFile>C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/samplemap.xnb</DestFile>
-  <DestTime>2022-07-26T12:08:52.577028+08:00</DestTime>
+  <DestFile>c:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/samplemap.xnb</DestFile>
+  <DestTime>2022-07-26T15:31:25.6398234+08:00</DestTime>
   <Importer>TiledMapImporter</Importer>
   <ImporterTime>2020-08-30T01:17:30+08:00</ImporterTime>
   <Processor>TiledMapProcessor</Processor>
   <ProcessorTime>2020-08-30T01:17:30+08:00</ProcessorTime>
   <Dependencies />
   <BuildAsset>
-    <string>C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[A]WaterFall_pipo_0.xnb</string>
-    <string>C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[Base]BaseChip_pipo_0.xnb</string>
-    <string>C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[A]Grass_pipo_0.xnb</string>
-    <string>C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[A]Water_pipo_0.xnb</string>
-    <string>C:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[A]Flower_pipo_0.xnb</string>
+    <string>c:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[A]WaterFall_pipo_0.xnb</string>
+    <string>c:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[Base]BaseChip_pipo_0.xnb</string>
+    <string>c:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[A]Grass_pipo_0.xnb</string>
+    <string>c:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[A]Water_pipo_0.xnb</string>
+    <string>c:/Users/11597/Documents/monogametest/Content/bin/DesktopGL/Content/tiled/[A]Flower_pipo_0.xnb</string>
   </BuildAsset>
   <BuildOutput />
 </PipelineBuildEvent>
