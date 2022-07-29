@@ -44,8 +44,7 @@ public class Animator{
     /// </summary>
     /// <param name="gameTime"></param>
     /// <param name="_node">The node this animator is on.</param>
-    public void Update(GameTime gameTime, Node _node){
-        node = _node;
+    public void Update(GameTime gameTime){
         if(play){
             Timer += gameTime.ElapsedGameTime.Milliseconds;
             if(Timer >= current.frameTime[index]){
@@ -53,7 +52,8 @@ public class Animator{
                     index += 1;
                 }
                 else{
-                    index = 0;
+                    if(current.loop)
+                        index = 0;
                 }
                 Timer = 0;
             }

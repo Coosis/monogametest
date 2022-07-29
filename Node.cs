@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame;
 
 public class Node{
+    public int NodeID;
+    public static List<Node> NodePool = new List<Node>();
     public Texture2D texture;
     /// <summary>
     /// The position of the node.
@@ -35,17 +37,29 @@ public class Node{
         }
     }
     protected Vector2 _position = new Vector2(0, 0);
-    protected Vector2 center = new Vector2(0, 0);
+    public Vector2 center = new Vector2(0, 0);
     public int width = 0, height = 0, depth = 0;
     public float angle = 0, layer = 0;
     public Color color = new Color(255, 255, 255, 255);
     public SpriteEffects flip = SpriteEffects.None;
     
+    //special classes that enables the node to do great things
     public Animator animator;
+    public Collider collider;
+    public PhysicalBody physicalBody;
+
+    //node tree properties
     public Node parent;
     public List<Node> children = new List<Node>();
+
+    /// <summary>
+    /// Update the node.
+    /// </summary>
+    /// <param name="gameTime"></param>
     public void Update(GameTime gameTime){
-        animator?.Update(gameTime, this);
+        animator?.Update(gameTime);
+        physicalBody?.Update(gameTime);
+        collider?.Update(gameTime);
     }
     public void Draw(SpriteBatch spriteBatch){
         spriteBatch.Begin(samplerState: SamplerState.PointWrap);
@@ -75,7 +89,19 @@ public class Node{
             Child.position = pos;
         }
     }
+    public void AddAnimator(){
+        animator = new Animator(this);
+    }
+    public void AddCollider(Vector2 Bounds){
+        collider = new Collider(this, Bounds);
+    }
+    public void AddPhysicalBody(){
+        physicalBody = new PhysicalBody(this);
+    }
     public Node(){
+        if(!NodePool.Contains(this))
+            NodePool.Add(this);
+        NodeID = NodePool.IndexOf(this);
         children = new List<Node>();
     }
 }

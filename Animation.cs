@@ -12,6 +12,10 @@ using MonoGame;
 /// </summary>
 public class Animation{
     /// <summary>
+    /// Whether the animation plays again when it finishes or not.
+    /// </summary>
+    public bool loop = true;
+    /// <summary>
     /// The frames(in order) for the animation.
     /// </summary>
     public Texture2D[] textures;
