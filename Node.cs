@@ -9,6 +9,7 @@ using MonoGame;
 
 public class Node{
     public int NodeID;
+    public string NodeTag = "";
     public static List<Node> NodePool = new List<Node>();
     public Texture2D texture;
     /// <summary>

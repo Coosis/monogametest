@@ -104,22 +104,6 @@ public class Collider{
             }*/
         }
     }
-    private float min(float v1, float v2){
-        if(v1 <= v2)
-            return v1;
-        else return v2;
-    }
-    /// <summary>
-    /// Check whether a value is within a given range.
-    /// </summary>
-    /// <param name="value">The value to be checked.</param>
-    /// <param name="min">The minimum value of the range.</param>
-    /// <param name="max">The maximum value of the range.</param>
-    /// <returns></returns>
-    private bool WithinRange(float value, float min, float max)
-    {
-        return (value >= min) && (value <= max);
-    }
     /// <summary>
     /// Calculate the x/y overlap(in pixels)
     /// </summary>
@@ -130,16 +114,16 @@ public class Collider{
     /// <param name="yoverlapped">Y-overlap.</param>
     private void calculateOverlap(Vector2 pos_self, Vector2 pos_target, Collider c, out float xoverlapped, out float yoverlapped){
         bool xin, xendin, yin, yendin;
-        xin = WithinRange(pos_self.X, pos_target.X, pos_target.X + c.bounds.X);
-        xendin = WithinRange(pos_self.X + bounds.X, pos_target.X, pos_target.X + c.bounds.X);
-        yin = WithinRange(pos_self.Y, pos_target.Y, pos_target.Y + c.bounds.Y);
-        yendin = WithinRange(pos_self.Y + bounds.Y, pos_target.Y, pos_target.Y + c.bounds.Y);
+        xin = Math.WithinRange(pos_self.X, pos_target.X, pos_target.X + c.bounds.X);
+        xendin = Math.WithinRange(pos_self.X + bounds.X, pos_target.X, pos_target.X + c.bounds.X);
+        yin = Math.WithinRange(pos_self.Y, pos_target.Y, pos_target.Y + c.bounds.Y);
+        yendin = Math.WithinRange(pos_self.Y + bounds.Y, pos_target.Y, pos_target.Y + c.bounds.Y);
         xoverlapped = 0;
         yoverlapped = 0;
         
         if((pos_self.X-pos_target.X)*((pos_self.X+bounds.X)-(pos_target.X+c.bounds.X)) < 0){
             XOverlap[c] = true;
-            xoverlapped = min(bounds.X, c.bounds.X);
+            xoverlapped = Math.min(bounds.X, c.bounds.X);
         }
         else if(xin || xendin){
             XOverlap[c] = true;
@@ -150,7 +134,7 @@ public class Collider{
         }
         if((pos_self.Y-pos_target.Y)*((pos_self.Y+bounds.Y)-(pos_target.Y+c.bounds.Y)) < 0){
             YOverlap[c] = true;
-            yoverlapped = min(bounds.Y, c.bounds.Y);
+            yoverlapped = Math.min(bounds.Y, c.bounds.Y);
         }
         else if(yin || yendin){
             YOverlap[c] = true;
@@ -177,4 +161,87 @@ public class Collider{
         }
         bounds = _bounds;
     }
+}
+
+public class Raycast{
+    public static RayResult raycast(Vector2 p_start, Vector2 p_end){
+        RayResult result = new RayResult();
+        foreach(Collider c in Collider.colliders){
+            Vector2 p1 = c.node.position + c.UpperLeft;
+            Vector2 p2 = p1, p3 = p1, p4 = p1;
+            p2.X += c.bounds.X;
+            p3.Y += c.bounds.Y;
+            p4 += c.bounds;
+
+            if(Math.WithinRange(p_start.X, p1.X, p2.X)&&Math.WithinRange(p_start.Y, p1.Y, p3.Y))
+            {
+                result.hit = true;
+                result.point = p_start;
+                if(!result.colliders.Contains(c))
+                    result.colliders.Add(c);
+            }
+            else{
+                float[] distance = {-1, -1, -1, -1};
+                bool side1crossed = Math.CrossedLine(p1, p2, p_start, p_end);
+                bool side2crossed = Math.CrossedLine(p1, p3, p_start, p_end);
+                bool side3crossed = Math.CrossedLine(p3, p4, p_start, p_end);
+                bool side4crossed = Math.CrossedLine(p2, p4, p_start, p_end);
+                float _x = 0, _y = 0;
+                Vector2 vec;
+                if(side1crossed){
+                    _x = ((p1.X-p2.X)*(p_end.X*p_start.Y-p_start.X*p_end.Y)-(p_start.X-p_end.X)*(p2.X*p1.Y-p1.X*p2.Y))/((p1.X-p2.X)*(p_start.Y-p_end.Y)-(p_start.X-p_end.X)*(p1.Y-p2.Y));
+                    _y = ((p1.Y-p2.Y)*(p_end.Y*p_start.X-p_start.Y*p_end.X)-(p_start.Y-p_end.Y)*(p2.Y*p1.X-p1.Y*p2.X))/((p1.Y-p2.Y)*(p_start.X-p_end.X)-(p_start.Y-p_end.Y)*(p1.X-p2.X));
+                    vec = new Vector2(_x, _y);
+                    distance[0] = Math.distance(p_start, vec);
+                }  
+                if(side2crossed){
+                    _x = ((p1.X-p3.X)*(p_end.X*p_start.Y-p_start.X*p_end.Y)-(p_start.X-p_end.X)*(p3.X*p1.Y-p1.X*p3.Y))/((p1.X-p3.X)*(p_start.Y-p_end.Y)-(p_start.X-p_end.X)*(p1.Y-p3.Y));
+                    _y = ((p1.Y-p3.Y)*(p_end.Y*p_start.X-p_start.Y*p_end.X)-(p_start.Y-p_end.Y)*(p3.Y*p1.X-p1.Y*p3.X))/((p1.Y-p3.Y)*(p_start.X-p_end.X)-(p_start.Y-p_end.Y)*(p1.X-p3.X));
+                    vec = new Vector2(_x, _y);
+                    distance[1] = Math.distance(p_start, vec);
+                }
+                if(side3crossed){
+                    _x = ((p3.X-p4.X)*(p_end.X*p_start.Y-p_start.X*p_end.Y)-(p_start.X-p_end.X)*(p4.X*p3.Y-p3.X*p4.Y))/((p3.X-p4.X)*(p_start.Y-p_end.Y)-(p_start.X-p_end.X)*(p3.Y-p4.Y));
+                    _y = ((p3.Y-p4.Y)*(p_end.Y*p_start.X-p_start.Y*p_end.X)-(p_start.Y-p_end.Y)*(p4.Y*p3.X-p3.Y*p4.X))/((p3.Y-p4.Y)*(p_start.X-p_end.X)-(p_start.Y-p_end.Y)*(p3.X-p4.X));
+                    vec = new Vector2(_x, _y);
+                    distance[2] = Math.distance(p_start, vec);
+                }
+                if(side4crossed){
+                    _x = ((p2.X-p4.X)*(p_end.X*p_start.Y-p_start.X*p_end.Y)-(p_start.X-p_end.X)*(p4.X*p2.Y-p2.X*p4.Y))/((p2.X-p4.X)*(p_start.Y-p_end.Y)-(p_start.X-p_end.X)*(p2.Y-p4.Y));
+                    _y = ((p2.Y-p4.Y)*(p_end.Y*p_start.X-p_start.Y*p_end.X)-(p_start.Y-p_end.Y)*(p4.Y*p2.X-p2.Y*p4.X))/((p2.Y-p4.Y)*(p_start.X-p_end.X)-(p_start.Y-p_end.Y)*(p2.X-p4.X));
+                    vec = new Vector2(_x, _y);
+                    distance[3] = Math.distance(p_start, vec);
+                }
+                if(side1crossed||side2crossed||side3crossed||side4crossed){
+                    result.hit = true;
+                    int index = -1;
+                    float d = distance[0];
+                    bool found = false;
+                    for(int i = 0; i < 4; ++i){
+                        if(distance[i] != -1){
+                            if(!found){
+                                d = distance[i];
+                                found = true;
+                                index = i;
+                            }
+                            else if(distance[i] <= d){
+                                d = distance[i];
+                                index = i;
+                            }
+                        }
+                    }
+                }
+                else{
+                    result.hit = false;
+                }
+            }
+        }
+        return result;
+    }
+}
+
+public class RayResult{
+    public List<Collider> colliders = new List<Collider>();
+    public bool hit = false;
+    public Vector2 point = new Vector2(0, 0);
 }

@@ -33,11 +33,6 @@
 /processorParam:TextureFormat=Compressed
 /build:PS2P.spritefont
 
-#begin tiled/samplemap.tmx
-/importer:TiledMapImporter
-/processor:TiledMapProcessor
-/build:tiled/samplemap.tmx
-
 #begin ui/32map.png
 /importer:TextureImporter
 /processor:TextureProcessor

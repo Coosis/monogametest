@@ -27,16 +27,6 @@ C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\PS2P.xnb
 C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\MonoGame.Extended.dll
 C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
 C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\ui\ui_circle.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\samplemap.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\[A]Flower_pipo_0.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\[A]Flower_pipo_1.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\[A]Grass_pipo_0.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\[A]Grass_pipo_1.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\[A]WaterFall_pipo_0.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\[A]WaterFall_pipo_1.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\[A]Water_pipo_0.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\[A]Water_pipo_1.xnb
-C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Content\tiled\[Base]BaseChip_pipo_0.xnb
 C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\Autofac.dll
 C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\MonoGame.Extended.Graphics.dll
 C:\Users\11597\Documents\monogametest\bin\Debug\netcoreapp3.1\MonoGame.Extended.Tiled.dll

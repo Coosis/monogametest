@@ -35,6 +35,7 @@ namespace monogametest
         private Node player, block;
         private Vector2 movement = new Vector2(0, 0);
         private int JumpPhase;
+        private bool canJump = false;
         private float JumpTime;
         private int intA, intD;
         private OrthographicCamera cam;
@@ -106,6 +107,7 @@ namespace monogametest
             block.height = 64;
             block.AddCollider(new Vector2(512, 64));
             block.collider.elasticity = -0.8f;
+            block.NodeTag = "block";
             //block.AddPhysicalBody();
             //block.physicalBody.gravity_acceleration = new Vector2(0,0);
         }
@@ -152,7 +154,7 @@ namespace monogametest
                 if(p_KeyD && !KeyA)
                     player.animator.SetAnimation("Idle");
             }
-            if(KeyW && !p_KeyW){
+            if(KeyW && !p_KeyW && JumpPhase == 0 && canJump){
                 player.animator.SetAnimation("Jump");
                 JumpTime = 0;
                 JumpPhase = 1;
@@ -171,6 +173,7 @@ namespace monogametest
                     player.physicalBody.SetExternalForce("jump", new Vector2(0, 0));
                     JumpTime = 0;
                     JumpPhase = 0;
+                    Debug.WriteLine(1);
                 }
             }
             if(player.physicalBody.velocity.Y >= -0.25f && player.physicalBody.velocity.Y <= 0.25f && intD == intA && JumpPhase == 0)
@@ -185,6 +188,20 @@ namespace monogametest
             foreach(PhysicalBody pb in PhysicalBody.physicalBodies){
                 pb.Move();
             }
+
+            Vector2 pos = player.position;
+            pos.Y += 49;
+            Vector2 _pos = pos;
+            _pos.Y += 5;
+            RayResult r = Raycast.raycast(pos, _pos);
+            if(r.hit){
+                if(r.colliders.Count > 0)
+                if(r.colliders[0].node.NodeTag == "block"){
+                    canJump = true;
+                }
+                else canJump = false;
+            }
+            else canJump = false;
 
             //Core expressions
             previous_keystate = keystate;
